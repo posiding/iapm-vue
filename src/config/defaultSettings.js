@@ -18,8 +18,8 @@ export default {
   navTheme: 'dark', // theme for nav menu
   layout: 'sidemenu', // nav menu position: sidemenu or topmenu
   contentWidth: 'Fixed', // layout of content: Fluid or Fixed, only works when layout is topmenu
-  fixedHeader: false, // sticky header
-  fixSiderbar: false, // sticky siderbar
+  fixedHeader: true, // sticky header固定头部文件
+  fixSiderbar: true, // sticky siderbar固定侧边栏
   autoHideHeader: false, //  auto hide header
   colorWeak: false,
   multiTab: false,

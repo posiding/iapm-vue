@@ -18,7 +18,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: 'Ant Design Pro',
+      default: 'iapm 流程管理',
       required: false
     },
     showTitle: {

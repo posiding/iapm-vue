@@ -1,11 +1,13 @@
 <template>
   <a-breadcrumb class="breadcrumb">
     <a-breadcrumb-item v-for="(item, index) in breadList" :key="item.name">
+      <a-icon v-if="index === 0" type="home" style="padding-right: 10px;"/>
       <router-link
+        class="font-info"
         v-if="item.name != name && index != 1"
         :to="{ path: item.path === '' ? '/' : item.path }"
       >{{ item.meta.title }}</router-link>
-      <span v-else>{{ item.meta.title }}</span>
+      <span v-else class="font-info">{{ item.meta.title }}</span>
     </a-breadcrumb-item>
   </a-breadcrumb>
 </template>
@@ -42,4 +44,9 @@ export default {
 </script>
 
 <style scoped>
+  .font-info{
+    font-size: 14px;
+    font-family: "Microsoft YaHei Helvetica";
+    color: black;
+  }
 </style>

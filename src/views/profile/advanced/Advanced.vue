@@ -318,7 +318,7 @@ export default {
   .no-data {
     color: rgba(0, 0, 0, .25);
     text-align: center;
-    line-height: 64px;
+    line-height: 50px;
     font-size: 16px;
 
     i {

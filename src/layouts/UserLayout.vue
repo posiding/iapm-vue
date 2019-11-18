@@ -4,12 +4,12 @@
       <div class="top">
         <div class="header">
           <a href="/">
-            <img src="~@/assets/logo.svg" class="logo" alt="logo">
-            <span class="title">Ant Design</span>
+            <!--<img src="~@/assets/logo.svg" class="logo" alt="logo">-->
+            <span class="title">IAPM 流程管理系统</span>
           </a>
         </div>
         <div class="desc">
-          Ant Design 是西湖区最具影响力的 Web 设计规范
+          IAPM 是深圳市善臻科技有限公司出品
         </div>
       </div>
 
@@ -22,7 +22,7 @@
           <a href="_self">条款</a>
         </div>
         <div class="copyright">
-          Copyright &copy; 2018 白鹭学园技术组出品
+          Copyright &copy; 2019 ivan 流程管理系统
         </div>
       </div>
     </div>

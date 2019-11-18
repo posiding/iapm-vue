@@ -28,32 +28,27 @@
       :collapsible="true"
     ></side-menu>
 
-    <a-layout :class="[layoutMode, `content-width-${contentWidth}`]" :style="{ paddingLeft: contentPaddingLeft, minHeight: '100vh' }">
-      <!-- layout header -->
-      <global-header
-        :mode="layoutMode"
-        :menus="menus"
-        :theme="navTheme"
-        :collapsed="collapsed"
-        :device="device"
-        @toggle="toggle"
-      />
-
-      <!-- layout content -->
-      <a-layout-content :style="{ height: '100%', margin: '24px 24px 0', paddingTop: fixedHeader ? '64px' : '0' }">
-        <multi-tab v-if="multiTab"></multi-tab>
-        <transition name="page-transition">
-          <route-view />
-        </transition>
-      </a-layout-content>
-
-      <!-- layout footer -->
-      <a-layout-footer>
-        <global-footer />
-      </a-layout-footer>
-
-      <!-- Setting Drawer (show in development mode) -->
-      <setting-drawer v-if="!production"></setting-drawer>
+    <a-layout :class="[layoutMode, `content-width-${contentWidth}`]" :style="{ paddingLeft: contentPaddingLeft, minHeight: '100vh', background: '#E8EDF4', overflow: 'hidden', height: '100%' }">
+      <div class="content-table-full">
+        <div class="content-table-full-head">
+          <global-header
+            :mode="layoutMode"
+            :menus="menus"
+            :theme="navTheme"
+            :collapsed="collapsed"
+            :device="device"
+            @toggle="toggle"
+          />
+        </div>
+        <div class="content-table-full-content">
+          <a-layout-content :style="{ height: '100%', paddingTop: '0px' , overflow: 'hidden', background: '#F9F9F9'}">
+            <transition name="page-transition">
+              <route-view />
+            </transition>
+          </a-layout-content>
+        </div>
+      </div>
+      <!--<setting-drawer v-if="!production"></setting-drawer>-->
     </a-layout>
   </a-layout>
 
@@ -64,7 +59,6 @@ import { triggerWindowResizeEvent } from '@/utils/util'
 import { mapState, mapActions } from 'vuex'
 import { mixin, mixinDevice } from '@/utils/mixin'
 import config from '@/config/defaultSettings'
-
 import RouteView from './RouteView'
 import MultiTab from '@/components/MultiTab'
 import SideMenu from '@/components/Menu/SideMenu'
@@ -100,7 +94,7 @@ export default {
         return '0'
       }
       if (this.sidebarOpened) {
-        return '256px'
+        return '200px'
       }
       return '80px'
     }
@@ -177,5 +171,20 @@ export default {
 .page-transition-leave-active .page-transition-container {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
+}
+
+.content-table-full{
+  width: 100%;
+  height: 100vh;
+}
+.content-table-full-head {
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+}
+.content-table-full-content{
+  width: 100%;
+  height:calc(100vh - 50px);
+  padding: 10px;
 }
 </style>

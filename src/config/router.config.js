@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
+import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView, PageTable } from '@/layouts'
 import { bxAnaalyse } from '@/core/icons'
 
 export const asyncRouterMap = [
@@ -9,7 +9,7 @@ export const asyncRouterMap = [
     name: 'index',
     component: BasicLayout,
     meta: { title: '首页' },
-    redirect: '/dashboard/workplace',
+    redirect: '/user/login',
     children: [
       // dashboard
       {
@@ -72,7 +72,7 @@ export const asyncRouterMap = [
       {
         path: '/list',
         name: 'list',
-        component: PageView,
+        component: PageTable,
         redirect: '/list/table-list',
         meta: { title: '列表页', icon: 'table', permission: [ 'table' ] },
         children: [
@@ -82,6 +82,13 @@ export const asyncRouterMap = [
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
             component: () => import('@/views/list/TableList'),
             meta: { title: '查询表格', keepAlive: true, permission: [ 'table' ] }
+          },
+          {
+            path: '/org/position',
+            name: 'position',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: () => import('@/views/org/position/OrgPositionList'),
+            meta: { title: '职级管理', keepAlive: true, permission: [ 'table' ] }
           },
           {
             path: '/list/basic-list',

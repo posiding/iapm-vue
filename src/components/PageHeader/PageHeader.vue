@@ -2,11 +2,11 @@
   <div class="page-header">
     <div class="page-header-index-wide">
       <s-breadcrumb />
-      <div class="detail">
+      <!--<div class="detail">
         <div class="main" v-if="!$route.meta.hiddenHeaderContent">
           <div class="row">
             <img v-if="logo" :src="logo" class="logo"/>
-            <h1 v-if="title" class="title">{{ title }}</h1>
+            &lt;!&ndash;<h1 v-if="title" class="title">{{ title }}</h1>&ndash;&gt;
             <div class="action">
               <slot name="action"></slot>
             </div>
@@ -26,7 +26,7 @@
             <slot name="pageMenu"></slot>
           </div>
         </div>
-      </div>
+      </div>-->
     </div>
   </div>
 </template>
@@ -64,12 +64,13 @@ export default {
 
 <style lang="less" scoped>
 .page-header {
-  background: #fff;
-  padding: 16px 32px 0;
+  background: #F9F9F9;
+  padding: 8px 20px 0;
   border-bottom: 1px solid #e8e8e8;
+  height: 38px;
 
   .breadcrumb {
-    margin-bottom: 16px;
+    margin-bottom: 8px;
   }
 
   .detail {

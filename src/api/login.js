@@ -13,11 +13,27 @@ import { axios } from '@/utils/request'
  * @returns {*}
  */
 export function login (parameter) {
-  return axios({
+  // return axios.get('/auth/login/' + parameter.username + '/' + parameter.password)
+  // console.log('---------------------' + parameter)
+  return axios.get('/auth/login', {
+    params: {
+      username: parameter.username,
+      password: parameter.password
+    }
+  })
+  /* return axios({
+    method: 'post',
+    url: '/auth/login',
+    data: {
+      username: parameter.username,
+      password: parameter.password
+    }
+  }) */
+  /* return axios({
     url: '/auth/login',
     method: 'post',
     data: parameter
-  })
+  }) */
 }
 
 export function getSmsCaptcha (parameter) {

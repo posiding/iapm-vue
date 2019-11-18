@@ -1,11 +1,17 @@
 <template>
   <transition name="showHeader">
-    <div v-if="visible" class="header-animat">
+    <div class="header-animat">
       <a-layout-header
-        v-if="visible"
         :class="[fixedHeader && 'ant-header-fixedHeader', sidebarOpened ? 'ant-header-side-opened' : 'ant-header-side-closed', ]"
-        :style="{ padding: '0' }">
-        <div v-if="mode === 'sidemenu'" class="header">
+        :style="{ padding: '0', background: '#001529', height: '50px', lineHeight: '50px'}">
+        <div class="header" >
+          <a-icon v-if="device==='mobile'" class="trigger" :type="collapsed ? 'menu-fold' : 'menu-unfold'" @click="toggle"/>
+          <a-icon v-else class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="toggle"/>
+          <!--<user-menu></user-menu>-->
+          <span style="padding-left: 0px;width:100px;height: 50px;line-height: 50px;font-size: 14px;" title="点击展示所有的系统引用">系统应用</span>
+        </div>
+        <!--原始内容 modify by ivan 2019年11月14日-->
+        <!--<div v-if="mode === 'sidemenu'" class="header">
           <a-icon v-if="device==='mobile'" class="trigger" :type="collapsed ? 'menu-fold' : 'menu-unfold'" @click="toggle"/>
           <a-icon v-else class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="toggle"/>
           <user-menu></user-menu>
@@ -19,7 +25,7 @@
             </div>
             <user-menu class="header-index-right"></user-menu>
           </div>
-        </div>
+        </div>-->
       </a-layout-header>
     </div>
   </transition>

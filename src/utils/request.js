@@ -14,6 +14,7 @@ const service = axios.create({
   baseURL: '/api', // api base_url
   timeout: 6000 // 请求超时时间
 })
+// service.defaults.headers.post['Content-Type'] = 'application/json'
 
 const err = (error) => {
   if (error.response) {
