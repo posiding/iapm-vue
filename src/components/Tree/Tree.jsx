@@ -39,7 +39,7 @@ export default {
       return (
         <Search
           placeholder="input search text"
-          style="width: 100%; margin-bottom: 1rem"
+          style="width: 100%; margin-bottom: 0rem"
         />
       )
     },

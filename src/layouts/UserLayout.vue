@@ -9,7 +9,7 @@
           </a>
         </div>
         <div class="desc">
-          IAPM 是深圳市善臻科技有限公司出品
+          IAPM 是江西省匠远科技有限公司出品
         </div>
       </div>
 

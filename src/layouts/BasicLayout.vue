@@ -9,14 +9,14 @@
       :visible="collapsed"
       @close="drawerClose"
     >
-      <side-menu
+      <side-menu系统应用
         mode="inline"
         :menus="menus"
         :theme="navTheme"
         :collapsed="false"
         :collapsible="true"
         @menuSelect="menuSelect"
-      ></side-menu>
+      ></side-menu系统应用>
     </a-drawer>
 
     <side-menu
@@ -33,10 +33,10 @@
         <div class="content-table-full-head">
           <global-header
             :mode="layoutMode"
-            :menus="menus"
             :theme="navTheme"
             :collapsed="collapsed"
             :device="device"
+            @switch="switchModule"
             @toggle="toggle"
           />
         </div>
@@ -65,6 +65,7 @@ import SideMenu from '@/components/Menu/SideMenu'
 import GlobalHeader from '@/components/GlobalHeader'
 import GlobalFooter from '@/components/GlobalFooter'
 import SettingDrawer from '@/components/SettingDrawer'
+import { BasicLayout, PageTable } from '@/layouts'
 
 export default {
   name: 'BasicLayout',
@@ -75,7 +76,9 @@ export default {
     SideMenu,
     GlobalHeader,
     GlobalFooter,
-    SettingDrawer
+    SettingDrawer,
+    BasicLayout,
+    PageTable
   },
   data () {
     return {
@@ -106,6 +109,9 @@ export default {
   },
   created () {
     this.menus = this.mainMenu.find(item => item.path === '/').children
+    console.log('---------------------------------------')
+    console.table(this.menus)
+    console.log('---------------------------------------')
     this.collapsed = !this.sidebarOpened
   },
   mounted () {
@@ -125,6 +131,41 @@ export default {
       this.collapsed = !this.collapsed
       this.setSidebar(!this.collapsed)
       triggerWindowResizeEvent()
+    },
+    switchModule (id) {
+      const orgRoute = []
+      if (id === 1) {
+        orgRoute.push({
+          path: '/org',
+          name: 'org',
+          component: import('@/layouts/BasicLayout'),
+          meta: { title: '组织机构' },
+          children: [{
+            path: '/org/position',
+            name: 'position',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: import('@/views/org/position/OrgPositionList'),
+            meta: { title: '职级管理', keepAlive: true, permission: [ 'table' ] }
+          }]
+        })
+      } else {
+        orgRoute.push({
+          path: '/sys',
+          name: 'sys',
+          component: import('@/layouts/BasicLayout'),
+          meta: { title: '系统管理' },
+          children: [{
+            path: '/sys/menu',
+            name: 'sysMenu',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: import('@/views/sys/menu/SysMenuList'),
+            meta: { title: '菜单管理', keepAlive: true, permission: [ 'table' ] }
+          }]
+        })
+      }
+      this.menus = orgRoute
+      // 主模块切换
+      console.log('--------->:' + id)
     },
     paddingCalc () {
       let left = ''
