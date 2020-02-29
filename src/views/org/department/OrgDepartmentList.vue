@@ -23,6 +23,7 @@
         <div class="table-operator">
           <div class="button-group">
             <a-button type="primary" size="small" @click="$refs.orgDepartmentEdit.add()">新建</a-button>
+            <a-button type="primary" size="small" @click="$refs.addressSelect.add()">组织架构选择</a-button>
             <a-button type="primary" size="small" @click="$refs.orgDepartmentEdit.add()">删除</a-button>
           </div>
           <div class="search-group">
@@ -76,6 +77,7 @@
             </template>
           </span>
         </s-table>
+        <i-address ref="addressSelect"></i-address>
         <org-department-edit ref="orgDepartmentEdit" @ok="handleOk"></org-department-edit>
         <sys-common-query v-model="sendVal" type="danger" title="标题内容" content="我是内容" v-on:cancel="clickCancel()" >
           <a-form layout="inline" class="searchForm">
@@ -110,6 +112,7 @@ import { orgUnitTree } from '@/api/org/orgUnitApi'
 import { getOrgDepartmentData } from '@/api/org/orgDepartmentApi'
 import { STable, QInput } from '@/components'
 import SysCommonQuery from '@/views/common/SysCommonQuery'
+import IAddress from '@/views/system/component/IAddress'
 import OrgDepartmentEdit from './OrgDepartmentEdit'
 import ISectionHeader from '@/views/system/component/ISectionHeader'
 import moment from 'moment'
@@ -121,7 +124,8 @@ export default {
     SysCommonQuery,
     moment,
     OrgDepartmentEdit,
-    ISectionHeader
+    ISectionHeader,
+    IAddress
   },
   data () {
     return {

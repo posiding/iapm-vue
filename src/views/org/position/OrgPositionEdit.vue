@@ -44,6 +44,7 @@ import { addOrgPosition, getOrgPosition } from '@/api/org/orgPositionApi'
 export default {
   data () {
     return {
+      resizeable: false,
       labelCol: {
         xs: { span: 24 },
         sm: { span: 7 }

@@ -1,7 +1,8 @@
 <template>
-  <a-modal
-    title="编辑菜单信息"
+  <i-dialog
+    title="菜单信息"
     :width="640"
+    :height="600"
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
@@ -67,16 +68,18 @@
       </a-form>
     </a-spin>
     <icon ref="iconSelect" @choose="iconChange"></icon>
-  </a-modal>
+  </i-dialog>
 </template>
 <script>
 import { saveData, findById, sysMenuTree } from '@/api/sys/sysMenuApi'
 import Icon from '@/components/IconSelector/Icon'
+import IDialog from '@/views/system/component/IDialog'
 import ARadioButton from 'ant-design-vue/es/radio/RadioButton'
 export default {
   components: {
     ARadioButton,
-    Icon
+    Icon,
+    IDialog
   },
   data () {
     return {

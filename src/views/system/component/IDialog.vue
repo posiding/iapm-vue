@@ -1,27 +1,26 @@
 <template>
-  <div class="my_dialog" v-show="visible" :style="{zIndex: calcZIndex }">
+  <div class="i_dialog" v-show="visible" :style="{zIndex: this.zIndex }">
     <!-- 遮罩层 -->
-    <div class="my_dialog_mask"></div>
-    <div class="my_dialog_box" v-drag :style="{width: calcWidth, height: calcHeight }">
+    <div v-show="mask" v-bind:style="maskStyle"></div>
+    <div class="i_dialog_box" v-drag="dragable" :style="{width: isNaN(this.dialogHeight) ? this.dialogWidth : this.dialogWidth + 'px', height: this.dialogHeight + 'px' }">
       <!-- 标题 -->
-      <div class="my_dialog_title" v-if="title ? true : false">
+      <div class="i_dialog_title" v-if="title ? true : false" :style="{cursor: this.dragable ? 'all-scroll' : 'default'}">
         {{title}}
-        <span v-if="closable" class="my_dialog_close" @click="cancel">X</span>
+        <span v-if="closable" class="i_dialog_close" @click="cancel">X</span>
       </div>
       <!-- 内容 -->
-      <div class="my_dialog_content">
+      <div class="i_dialog_content">
         <slot></slot>
       </div>
       <!-- 底部按钮 -->
-      <div class="my_dialog_bottom">
-        <a-button size="small" v-if="okButton" :type="okType" @click="confirm">{{okText}}</a-button>
-        <a-button size="small" v-if="cancelButton" :type="calcelType" @click="cancel">{{cancelText}}</a-button>
+      <div class="i_dialog_bottom">
+        <slot name="footer">
+          <a-button size="small" v-if="okButton" :type="okType" @click="confirm">{{okText}}</a-button>
+          <a-button size="small" v-if="cancelButton" :type="calcelType" @click="cancel">{{cancelText}}</a-button>
+        </slot>
       </div>
-      <div class="my_dialog_bottom_border">
-      </div>
-      <div class="my_dialog_right_border">
-      </div>
-      <div class="my_dialog_right_bottom_border">
+      <div class="i_dialog_right_bottom_border" v-show="resizeable" v-resize="{ dragWidth: dragWidth, dragHeight: dragHeight }">
+        <img src="@/views/system/image/resize.gif" class="i_bottom_border_image">
       </div>
     </div>
   </div>
@@ -32,38 +31,42 @@ export default {
   name: 'IDialog',
   props: {
     value: {},
-    showTitle: {
-      type: Boolean,
-      default: true
-    },
+    // 是否可见
     visible: {
       type: Boolean,
       default: false
     },
-    // 标题属性
+    // 标题内容
     title: {
       type: String,
       default: ''
     },
+    // 是否打开取消按钮
     cancelButton: {
       type: Boolean,
       default: true
     },
+    // 取消按钮文本框
     cancelText: {
       type: String,
       default: '取消'
     },
+    // 取消按钮类型
     calcelType: {
-      type: String
+      type: String,
+      default: null
     },
+    // 确定按钮文本框内容
     okText: {
       type: String,
       default: '确定'
     },
+    // 确定按钮类型
     okType: {
       type: String,
       default: 'primary'
     },
+    // 是否打开确定按钮
     okButton: {
       type: Boolean,
       default: true
@@ -87,10 +90,52 @@ export default {
     closable: {
       type: Boolean,
       default: true
+    },
+    // 是否展示遮罩层
+    mask: {
+      type: Boolean,
+      default: true
+    },
+    // 点击遮罩层是否允许关闭
+    maskClosable: {
+      type: Boolean,
+      default: true
+    },
+    // 遮罩层样式内容
+    maskStyle: {
+      type: Object,
+      default: () => {
+        return {
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          bottom: 0,
+          right: 0,
+          backgroundColor: '#000',
+          opacity: 0.5
+        }
+      }
+    },
+    // 是否允许拖动
+    dragable: {
+      type: Boolean,
+      default: true
+    },
+    // 是否允许拖动改变大小
+    resizeable: {
+      type: Boolean,
+      default: true
+    },
+    // 重置大小之后是否自动居中
+    autoCenter: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
+      dialogWidth: this.width,
+      dialogHeight: this.height
     }
   },
   created () {
@@ -102,31 +147,33 @@ export default {
     }
   },
   methods: {
+    // 拖动改变弹出层宽度
+    dragWidth: function (width) {
+      this.dialogWidth = width
+    },
+    // 拖动改变高度
+    dragHeight: function (height) {
+      this.dialogHeight = height
+    },
+    // 遮罩层是否允许关闭
+    maskMange: function () {
+      if (this.maskClosable) {
+        this.cancel()
+      }
+    },
+    // 关闭功能
     cancel: function () {
+      // 关闭之后的回调功能
       this.$emit('cancel')
     },
+    // 确定功能
     confirm: function () {
+      this.$emit('ok')
     }
   },
   mounted () {
   },
   computed: {
-    // 设置z-index
-    calcZIndex: function () {
-      return this.zIndex
-    },
-    // 计算宽度
-    calcWidth: function () {
-      return this.width + 'px'
-    },
-    // 计算高度
-    calcHeight: function () {
-      return this.height + 'px'
-    },
-    // 计算是否允许关闭
-    calcCloable: function () {
-      return this.closable
-    }
   },
   watch: {
     value (newVal, oldVal) {
@@ -140,47 +187,51 @@ export default {
     drag: {
       inserted: function (el, binding, vnode) {
         vnode = vnode.elm
-        el.onmousedown = function () {
-          if (event.target.className !== 'my_dialog_title') {
-            return
-          }
-          // (clientX, clientY)点击位置距离当前可视区域的坐标(x，y)
-          // offsetLeft, offsetTop 距离上层或父级的左边距和上边距
-          // 获取鼠标在弹窗中的位置
-          const mouseX = event.clientX - vnode.offsetLeft
-          const mouseY = event.clientY - vnode.offsetTop
-          // 绑定移动和停止函数
-          document.onmousemove = function () {
-            let left, top
-            // 获取新的鼠标位置(event.clientX, event.clientY)
-            // 弹窗应该在的位置(left, top)
-            left = event.clientX - mouseX
-            top = event.clientY - mouseY
-            // offsetWidth、offsetHeight 当前元素的宽度
-            // innerWidth、innerHeight 浏览器可视区的宽度和高度
-            // 获取弹窗在页面中距X轴的最小、最大 位置
-            const minX = -vnode.offsetWidth / 2 + 100
-            const maxX = window.innerWidth + vnode.offsetWidth / 2 - 100
-            if (left <= minX) {
-              left = minX
-            } else if (left >= maxX) {
-              left = maxX
+        const bindingValue = binding.value
+        if (bindingValue) {
+          el.onmousedown = function () {
+            if (event.target.className !== 'i_dialog_title') {
+              return
             }
-            // 获取弹窗在页面中距Y轴的最小、最大 位置
-            const minY = vnode.offsetHeight / 2
-            const maxY = window.innerHeight + vnode.offsetHeight / 2 - 100
-            if (top <= minY) {
-              top = minY
-            } else if (top >= maxY) {
-              top = maxY
+            // (clientX, clientY)点击位置距离当前可视区域的坐标(x，y)
+            // offsetLeft, offsetTop 距离上层或父级的左边距和上边距
+            // 获取鼠标在弹窗中的位置
+            console.log('当前点击X坐标' + event.clientX + ';offsetLeft:' + vnode.offsetLeft)
+            const mouseX = event.clientX - vnode.offsetLeft
+            const mouseY = event.clientY - vnode.offsetTop
+            // 绑定移动和停止函数
+            document.onmousemove = function () {
+              let left, top
+              // 获取新的鼠标位置(event.clientX, event.clientY)
+              // 弹窗应该在的位置(left, top)
+              left = event.clientX - mouseX
+              top = event.clientY - mouseY
+              // offsetWidth、offsetHeight 当前元素的宽度
+              // innerWidth、innerHeight 浏览器可视区的宽度和高度
+              // 获取弹窗在页面中距X轴的最小、最大 位置
+              const minX = -vnode.offsetWidth / 2 + 100
+              const maxX = window.innerWidth + vnode.offsetWidth / 2 - 100
+              if (left <= minX) {
+                left = minX
+              } else if (left >= maxX) {
+                left = maxX
+              }
+              // 获取弹窗在页面中距Y轴的最小、最大 位置
+              const minY = vnode.offsetHeight / 2
+              const maxY = window.innerHeight + vnode.offsetHeight / 2 - 100
+              if (top <= minY) {
+                top = minY
+              } else if (top >= maxY) {
+                top = maxY
+              }
+              // 赋值移动
+              vnode.style.left = left + 'px'
+              vnode.style.top = top + 'px'
             }
-            // 赋值移动
-            vnode.style.left = left + 'px'
-            vnode.style.top = top + 'px'
-          }
-          document.onmouseup = function (e) {
-            document.onmousemove = null
-            document.onmouseup = null
+            document.onmouseup = function (e) {
+              document.onmousemove = null
+              document.onmouseup = null
+            }
           }
         }
         // 布局的过程中重复居中
@@ -190,47 +241,54 @@ export default {
         }
       }
     },
-    // 右边拖动事件
-    rightDrag: {
-      inserted: function (el, binding, vnode) {
-        console.log('----right drag 执行执行了注册--------')
-        vnode = vnode.elm
-        el.onmousedown = function () {
-          // 获取鼠标在弹窗中的位置
-          const mouseX = event.clientX - vnode.offsetLeft
-          const mouseY = event.clientY - vnode.offsetTop
-          console.log('clientX：' + event.clientX)
-          console.log('clientY：' + event.clientY)
-          console.log('mouseX:' + mouseX + ';mouseY:' + mouseY)
-          document.onmousemove = function (e) {
-            console.log('------')
-          }
-        }
-      }
-    },
-    // 底部拉动div的大小
-    bottomDrag: {
+    resize: {
       inserted: function (el, binding, vnode) {
         vnode = vnode.elm
-        el.onmousedown = function (e) {
-          const bottomBoard = document.getElementById('my_dialog_bottom_border')
-          const mouseStart = {}
-          const bottomStart = {}
-          el.onmousedown = function (e) {
-            const oEvent = e || event
-            mouseStart.x = oEvent.clientX
-            mouseStart.y = oEvent.clientY
-            bottomStart.y = bottomBoard.offsetTop
+        const bindingValue = binding.value
+        if (bindingValue) {
+          console.log('--------resize---------------注册成功')
+          el.onmousedown = function () {
+            if (event.target.className !== 'i_bottom_border_image') {
+              return
+            }
+            // (clientX, clientY)点击位置距离当前可视区域的坐标(x，y)
+            // offsetLeft, offsetTop 距离上层或父级的左边距和上边距
+            // 获取鼠标在弹窗中的位置
+            // const mouseX = event.clientX - vnode.offsetLeft
+            // const mouseY = event.clientY - vnode.offsetTop
+            const startX = event.clientX
+            const startY = event.clientY
+            // 绑定移动和停止函数
+            const boxOffsetWidth = document.querySelector('.i_dialog_box').offsetWidth
+            const boxOffsetHeight = document.querySelector('.i_dialog_box').offsetHeight
+
+            const maxWidth = document.body.clientWidth
+            const maxHeight = document.body.clientHeight
             document.onmousemove = function (e) {
-              const oEvent = e || event
-              const t = oEvent.clientY - mouseStart.y + bottomStart.y
-              const h = t + bottomBoard.offsetHeight
-              console.log('h:' + h)
-              // document.getElementById('my_dialog_content').style.height = h + 'px'
+              e.preventDefault()
+              const currentX = e.clientX
+              const currentY = e.clientY
+              console.log('maxWidth:' + maxWidth + 'maxHeight:' + maxHeight)
+              // 控制宽度范围和最大范围
+              let width = boxOffsetWidth + (currentX - startX)
+              if (width <= 200) {
+                width = 100
+              } else if (width >= (maxWidth - 150)) {
+                width = maxWidth - 150
+              }
+              binding.value.dragWidth(width)
+              // 控制缩小高度范围和最大范围
+              let height = boxOffsetHeight + (currentY - startY)
+              if (height <= 150) {
+                height = 100
+              } else if (height >= (maxHeight - 100)) {
+                height = maxHeight - 100
+              }
+              binding.value.dragHeight(height)
             }
             document.onmouseup = function (e) {
               document.onmousemove = null
-              document.onmouseout = null
+              document.onmouseup = null
             }
           }
         }
@@ -240,7 +298,7 @@ export default {
 }
 </script>
 <style scoped>
-  .my_dialog {
+  .i_dialog {
     position: fixed;
     z-index: 99;
     left: 0;
@@ -248,7 +306,7 @@ export default {
     bottom: 0;
     right: 0;
   }
-  .my_dialog_mask {
+  .i_dialog_mask {
     position: absolute;
     left: 0;
     top: 0;
@@ -257,7 +315,7 @@ export default {
     background-color: #000;
     opacity: 0.5;
   }
-  .my_dialog_box {
+  .i_dialog_box {
     position: absolute;
     background: #fff;
     top: 50%;
@@ -266,18 +324,22 @@ export default {
     border-radius: 3px;
     overflow: hidden;
     transform: translate(-50%, -50%);
+    border: 1px solid #e7e8eb;
+    -webkit-box-shadow: #666 0px 0px 10px;
+    -moz-box-shadow: #666 0px 0px 10px;
+    box-shadow: #666 0px 0px 10px;
   }
-  .my_dialog_content {
+  .i_dialog_content {
     overflow-x: hidden;
     overflow-y: auto;
     position: relative;
     padding: 8px;
     text-align: left;
     box-sizing: border-box;
-    height: calc(100% - 74px);
+    height: calc(100% - 82px);
   }
-  .my_dialog_title {
-    cursor: all-scroll;
+  .i_dialog_title {
+    /*cursor: all-scroll;*/
     word-break: keep-all;
     white-space: nowrap;
     overflow: hidden;
@@ -294,8 +356,9 @@ export default {
     padding: 0 31px 0 18px;
     text-align: left;
     user-select: none;
+    font-weight: bold;
   }
-  .my_dialog_close {
+  .i_dialog_close {
     cursor: pointer;
     position: absolute;
     top: 50%;
@@ -306,35 +369,18 @@ export default {
     line-height: 16px;
     color: #ccc;
   }
-  .my_dialog_close:hover {
+  .i_dialog_close:hover {
     color: #409eff;
   }
-  .my_dialog_bottom {
+  .i_dialog_bottom {
     margin: 0;
     padding: 0;
     text-align: center;
-    height: 32px;
-    line-height: 32px;
-    /*border-top: 1px solid transparent;*/
+    height: 40px;
+    line-height: 40px;
     border-top: 1px solid #e7e8eb;
   }
-  .my_dialog_bottom_border {
-    position: absolute;
-    left: 0px;
-    bottom: 0px;
-    width: calc(100% - 15px);
-    height: 10px;
-    cursor: s-resize;
-  }
-  .my_dialog_right_border {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    height: calc(100% - 15px);
-    width: 4px;
-    cursor: w-resize;
-  }
-  .my_dialog_right_bottom_border {
+  .i_dialog_right_bottom_border {
     position: absolute;
     right: 0px;
     bottom: 0px;
@@ -342,43 +388,15 @@ export default {
     width: 15px;
     cursor: se-resize;
   }
-  .btn {
-    min-width: 60px;
-    text-align: center;
-    vertical-align: middle;
-    font-size: 14px;
-    padding: 5px 15px;
-    border-radius: 3px;
-    text-decoration: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  .my_dialog_bottom .cancelBtn:focus,
-  .my_dialog_bottom .cancelBtn:hover {
-    color: #409eff;
-    background: #ecf5ff;
-    border: 1px solid #b3d8ff;
-  }
-  .my_dialog_bottom .confirmBtn:focus,
-  .my_dialog_bottom .confirmBtn:hover {
-    background: #66b1ff;
-    border: 1px solid #66b1ff;
-    color: #fff;
-  }
-  .my_dialog_bottom .confirm_btn .marginLeft {
+  .i_dialog_bottom .confirm_btn .marginLeft {
     margin-left: 10px;
-  }
-  .cancelBtn {
-    border: 1px solid #dcdfe6;
-    background-color: #fff;
-    color: #606266;
-  }
-  .confirmBtn {
-    border: 1px solid #409eff;
-    background-color: #409eff;
-    color: #fff;
   }
   button + button {
     margin-left: 15px;
+  }
+  .i_bottom_border_image {
+    position: absolute;
+    margin-bottom: 0px;
+    margin-right: 0px;
   }
 </style>

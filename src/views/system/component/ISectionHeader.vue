@@ -19,6 +19,7 @@ export default {
 <style scoped>
   .section-header {
     display: flex;
+    width: 100%;
     -webkit-box-align: center;
     padding: 5px 15px;
     align-items: center;

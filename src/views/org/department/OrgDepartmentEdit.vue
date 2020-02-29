@@ -1,14 +1,13 @@
 <template>
-  <!--<a-modal
-    title="新增部门信息"
-    :width="560"
-    :visible="visible"
-    :centered="true"
-    :confirmLoading="confirmLoading"
-    @ok="handleSubmit"
-    @cancel="handleCancel"
-  >-->
-  <i-dialog title="部门信息" :visible="visible" width="800" height="500" closable @cancel="calcelEdit">
+    <i-dialog
+      :title="部门信息"
+      :width="900"
+      :height="500"
+      :visible="visible"
+      :confirmLoading="confirmLoading"
+      @ok="handleSubmit"
+      @cancel="handleCancel"
+    >
     <a-spin :spinning="confirmLoading" style="margin-right: 10px">
       <a-form :form="form">
         <i-section-header title="基本信息"></i-section-header>
@@ -40,11 +39,12 @@
               <a-input-number :min="1" :max="1000000" style="width: 100%" v-decorator="[ 'sort', validatorRules.sort ]" />
             </a-form-item>
           </a-col>
-        </a-row>
-        <a-row>
-          <a-col :span="24">
-            <a-form-item label="描述" :label-col="{ span: 3 }" :wrapper-col="{ span: 21 }">
-              <a-textarea placeholder="请输入部门描述内容" :rows="2"  v-decorator="[ 'remark' ]" />
+          <a-col :span="12">
+            <a-form-item label="状态" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+              <a-radio-group v-decorator="['status', {initialValue: 0, rules: [{required: true}]}]" style="width: 100%">
+                <a-radio :value="0">启用</a-radio>
+                <a-radio :value="1">停用</a-radio>
+              </a-radio-group>
             </a-form-item>
           </a-col>
         </a-row>
@@ -58,6 +58,13 @@
           <a-col :span="12">
             <a-form-item label="部门分管领导" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
               <a-input v-decorator="[ 'orgDepartmentChargerId']" placeholder="请选择部门分管领导" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row>
+          <a-col :span="24">
+            <a-form-item label="描述" :label-col="{ span: 3 }" :wrapper-col="{ span: 21 }">
+              <a-textarea placeholder="请输入部门描述内容" :rows="2"  v-decorator="[ 'remark' ]" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -79,7 +86,7 @@ export default {
   },
   data () {
     return {
-      dialogCloseable: false,
+      resizeable: true,
       labelCol: {
         xs: { span: 24 },
         sm: { span: 6 }

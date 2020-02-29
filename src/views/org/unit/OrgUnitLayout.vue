@@ -29,7 +29,7 @@
       </div>
       <div v-if="treeSelectId != ''">
         <a-form @submit="handleSubmit" :form="form" style="margin: 10px;">
-          <div class="title">基本信息</div>
+          <i-section-header title="基本信息"></i-section-header>
           <a-row type="flex">
             <a-col :span="12">
               <a-form-item
@@ -71,7 +71,7 @@
             </a-col>
           </a-row>
 
-          <div class="title">地址信息</div>
+          <i-section-header title="地址信息"></i-section-header>
           <a-row>
             <a-col :span="12">
               <a-form-item
@@ -130,7 +130,7 @@
             </a-col>
           </a-row>
 
-          <div class="title">权限信息</div>
+          <i-section-header title="权限信息"></i-section-header>
           <a-row>
             <a-col :span="12">
               <a-form-item
@@ -154,9 +154,13 @@
 </template>
 <script>
 import { orgUnitTree } from '@/api/org/orgUnitApi'
+import ISectionHeader from '@/views/system/component/ISectionHeader'
+import ACol from 'ant-design-vue/es/grid/Col'
 export default {
   name: 'OrgUnit',
   components: {
+    ACol,
+    ISectionHeader
   },
   data () {
     return {

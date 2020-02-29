@@ -19,10 +19,17 @@ export const asyncRouterMap = [
         meta: { title: '组织机构', keepAlive: true, icon: 'contacts' },
         children: [
           {
+            path: 'test',
+            name: 'test',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: () => import('@/views/org/unit/OrgUnitTest'),
+            meta: { title: '组件测试', keepAlive: true, permission: [ 'table' ] }
+          },
+          {
             path: 'unit',
             name: 'unit',
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
-            component: () => import('@/views/org/unit/OrgUnitLayout'),
+            component: () => import('@/views/org/unit/OrgUnitList'),
             meta: { title: '单位管理', keepAlive: true, permission: [ 'table' ] }
           },
           {
